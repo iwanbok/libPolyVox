@@ -143,9 +143,13 @@ namespace PolyVox
 		int32_t getDepth(void) const;
 
 		/// Gets a voxel at the position given by <tt>x,y,z</tt> coordinates
-		VoxelType getVoxel(int32_t uXPos, int32_t uYPos, int32_t uZPos) const;
+		const VoxelType &getVoxel(int32_t uXPos, int32_t uYPos, int32_t uZPos) const;
 		/// Gets a voxel at the position given by a 3D vector
-		VoxelType getVoxel(const Vector3DInt32& v3dPos) const;
+		const VoxelType &getVoxel(const Vector3DInt32& v3dPos) const;
+		/// Gets a writable voxel at the position given by <tt>x,y,z</tt> coordinates
+		VoxelType &getVoxelRef(int32_t uXPos, int32_t uYPos, int32_t uZPos);
+		/// Gets a writable voxel at the position given by a 3D vector
+		VoxelType &getVoxelRef(const Vector3DInt32& v3dPos);
 
 		/// Sets the value used for voxels which are outside the volume
 		void setBorderValue(const VoxelType& tBorder);

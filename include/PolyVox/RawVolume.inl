@@ -135,7 +135,7 @@ namespace PolyVox
 	/// \return The voxel value
 	////////////////////////////////////////////////////////////////////////////////
 	template <typename VoxelType>
-	VoxelType RawVolume<VoxelType>::getVoxel(int32_t uXPos, int32_t uYPos, int32_t uZPos) const
+	const VoxelType &RawVolume<VoxelType>::getVoxel(int32_t uXPos, int32_t uYPos, int32_t uZPos) const
 	{
 		if (this->m_regValidRegion.containsPoint(uXPos, uYPos, uZPos))
 		{
@@ -157,6 +157,27 @@ namespace PolyVox
 		}
 	}
 
+	template <typename VoxelType>
+	VoxelType &RawVolume<VoxelType>::getVoxelRef(int32_t uXPos, int32_t uYPos, int32_t uZPos)
+	{
+		const Region& regValidRegion = this->m_regValidRegion;
+		if (regValidRegion.containsPoint(Vector3DInt32(uXPos, uYPos, uZPos)) == false)
+		{
+			POLYVOX_THROW(std::out_of_range, "Position is outside valid region");
+		}
+
+		int32_t iLocalXPos = uXPos - regValidRegion.getLowerX();
+		int32_t iLocalYPos = uYPos - regValidRegion.getLowerY();
+		int32_t iLocalZPos = uZPos - regValidRegion.getLowerZ();
+
+		return m_pData
+			[
+				iLocalXPos +
+				iLocalYPos * this->getWidth() +
+				iLocalZPos * this->getWidth() * this->getHeight()
+			];
+	}
+
 	////////////////////////////////////////////////////////////////////////////////
 	/// This version of the function is provided so that the wrap mode does not need
 	/// to be specified as a template parameter, as it may be confusing to some users.
@@ -164,9 +185,15 @@ namespace PolyVox
 	/// \return The voxel value
 	////////////////////////////////////////////////////////////////////////////////
 	template <typename VoxelType>
-	VoxelType RawVolume<VoxelType>::getVoxel(const Vector3DInt32& v3dPos) const
+	const VoxelType &RawVolume<VoxelType>::getVoxel(const Vector3DInt32& v3dPos) const
 	{
 		return getVoxel(v3dPos.getX(), v3dPos.getY(), v3dPos.getZ());
+	}
+
+	template <typename VoxelType>
+	VoxelType &RawVolume<VoxelType>::getVoxelRef(const Vector3DInt32& v3dPos)
+	{
+		return getVoxelRef(v3dPos.getX(), v3dPos.getY(), v3dPos.getZ());
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
